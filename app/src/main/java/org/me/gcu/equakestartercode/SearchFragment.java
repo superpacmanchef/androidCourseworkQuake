@@ -1,6 +1,8 @@
 package org.me.gcu.equakestartercode;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,7 +16,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.google.android.material.button.MaterialButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,10 +36,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private EditText endDate;
     private DatePickerDialog.OnDateSetListener from_dateListener, to_dateListener;
     private List<Item> items;
-    private TextView eastText;
-    private TextView westText;
-    private TextView northText;
-    private TextView southText;
+    private LinearLayout eastLinear;
+    private LinearLayout westLinear;
+    private LinearLayout northLinear;
+    private LinearLayout southLinear;
+    private LinearLayout biggestLinear;
+    private LinearLayout deepestLinear;
+    private LinearLayout shallowestLinear;
+
+
     private IBottomNavMove bottomNavMove;
 
 
@@ -102,10 +113,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         search = (Button) view.findViewById(R.id.search);
         search.setOnClickListener(this::onClick);
 
-        eastText = (TextView) view.findViewById(R.id.eastText);
-        westText = (TextView) view.findViewById(R.id.westText);
-        northText = (TextView) view.findViewById(R.id.northText);
-        southText = (TextView) view.findViewById(R.id.southText);
+        eastLinear = (LinearLayout) view.findViewById(R.id.eastLinear);
+        westLinear = (LinearLayout) view.findViewById(R.id.westLinear);
+        northLinear = (LinearLayout) view.findViewById(R.id.northLinear);
+        southLinear = (LinearLayout) view.findViewById(R.id.southLinear);
+        biggestLinear = (LinearLayout) view.findViewById(R.id.biggestLinear);
+        deepestLinear = (LinearLayout) view.findViewById(R.id.deepestLinear);
+        shallowestLinear = (LinearLayout) view.findViewById(R.id.shallowestLinear);
 
         bottomNavMove = (IBottomNavMove) getActivity();
     }
@@ -190,22 +204,59 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         }
 
         //Sets text of each of the specific Items.
+        ScrollView sc = (ScrollView) getView().findViewById(R.id.scrollView3);
+        sc.setVisibility(View.VISIBLE);
         if (itemList.size() > 0) {
-            eastText.setText(rightist.getGeoLong());
-            westText.setText(leftist.getGeoLong());
-            northText.setText(upist.getGeoLat());
-            southText.setText(downist.getGeoLat());
+            eastLinear.addView(createButton(rightist));
+            westLinear.addView(createButton(leftist));
+            northLinear.addView(createButton(upist));
+            southLinear.addView(createButton(upist));
+            biggestLinear.addView(createButton(biggest));
+            deepestLinear.addView(createButton(deepest));
+            shallowestLinear.addView(createButton(shallowist));
         } else {
-            String nope = "none matched criteria";
-            eastText.setText(nope);
-            westText.setText(nope);
-            northText.setText(nope);
-            southText.setText(nope);
+            String nope = "No Earthquakes recorded during that time period";
+            TextView t = new TextView(requireContext());
+            t.setText(nope);
+            eastLinear.addView(t);
+            westLinear.addView(t);
+            northLinear.addView(t);
+            southLinear.addView(t);
+            biggestLinear.addView(t);
+            deepestLinear.addView(t);
+            shallowestLinear.addView(t);
         }
 
 
     }
 
+    private Button createButton(Item selectedItem)
+    {
+
+        String location = selectedItem.getLocation();
+
+        MaterialButton btn = new MaterialButton(getContext());
+        btn.setText("location: " + location);
+        btn.setTextColor(Color.BLACK);
+        btn.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), QuakeActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("Item", selectedItem);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        });
+
+
+        if (Float.parseFloat(selectedItem.getMagnitude()) < 1) {
+            btn.setBackgroundColor(Color.GREEN);
+        } else if (Float.parseFloat(selectedItem.getMagnitude()) >= 1 && Float.parseFloat(selectedItem.getMagnitude()) < 3) {
+            btn.setBackgroundColor(Color.YELLOW);
+        } else if (Float.parseFloat(selectedItem.getMagnitude()) >= 3) {
+            btn.setBackgroundColor(Color.RED);
+        }
+        return btn;
+
+    }
     private Date parseDate(String date) {
         SimpleDateFormat dateFormatOut = new SimpleDateFormat("dd-MM-yyyy");
         Date outDate = null;
@@ -229,5 +280,5 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    ;
+
 }

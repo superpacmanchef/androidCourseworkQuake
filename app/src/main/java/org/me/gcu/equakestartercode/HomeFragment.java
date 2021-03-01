@@ -60,15 +60,12 @@ public class HomeFragment extends Fragment {
                 MaterialButton btn = new MaterialButton(getContext());
                 btn.setText("location: " + location + "\n" + "mangitude: " + magnitude);
                 btn.setTextColor(Color.BLACK);
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getContext(), QuakeActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("Item", selectedItem);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }
+                btn.setOnClickListener(v -> {
+                    Intent intent = new Intent(getContext(), QuakeActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("Item", selectedItem);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
                 });
 
                 if (Float.parseFloat(selectedItem.getMagnitude()) < 1) {

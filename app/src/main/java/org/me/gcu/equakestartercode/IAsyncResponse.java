@@ -1,5 +1,5 @@
 package org.me.gcu.equakestartercode;
 
-public interface AsyncResponse {
+public interface IAsyncResponse {
     void returnXML(String xml);
 }

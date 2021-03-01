@@ -24,6 +24,6 @@ public class QuakeActivity extends AppCompatActivity
         title = (TextView)findViewById(R.id.Title);
         title.setText(selectedItem.getTitle());
         desc = (TextView)findViewById(R.id.Desc);
-        desc.setText(selectedItem.getDescription());
+        desc.setText(selectedItem.getCategory());
     }
 }

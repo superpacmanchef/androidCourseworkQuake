@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.media.midi.MidiDeviceService;
 import android.os.AsyncTask;
@@ -51,70 +52,69 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     private HomeFragment homeFragment = null;
     private MapFragment mapFragment = null;
     private SearchFragment searchFragment = null;
-    private ItemViewModel itemViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_nav_view);
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
-        itemViewModel = new ViewModelProvider(this).get(ItemViewModel.class);
+        ItemViewModel itemViewModel = new ItemViewModel();
         itemViewModel.getItems();
-        FragmentManager fm=getSupportFragmentManager();
-        FragmentTransaction ft=fm.beginTransaction();
-        if(homeFragment == null)
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        if (homeFragment == null)
         {
             homeFragment = new HomeFragment();
         }
-        ft.add(R.id.frameLayout , homeFragment);
-        ft.addToBackStack("Home");
+        ft.replace(R.id.frameLayout, homeFragment);
         ft.commit();
-
     }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         item.setChecked(true);
+        FragmentManager fm=getSupportFragmentManager();
+        FragmentTransaction ft=fm.beginTransaction();
         if(id == R.id.action_first_item)
         {
-            FragmentManager fm=getSupportFragmentManager();
-            FragmentTransaction ft=fm.beginTransaction();
+
             if(homeFragment == null)
             {
-             homeFragment = new HomeFragment();
+                homeFragment = new HomeFragment();
             }
             ft.replace(R.id.frameLayout , homeFragment);
-            ft.addToBackStack("Home");
             ft.commit();
+            ft.addToBackStack("Home");
         }
         else if(id == R.id.action_second_item)
         {
-            FragmentManager fm=getSupportFragmentManager();
-            FragmentTransaction ft=fm.beginTransaction();
+
             if(searchFragment == null)
             {
                 searchFragment = new SearchFragment();
             }
             ft.replace(R.id.frameLayout ,searchFragment);
-            ft.addToBackStack("Search");
             ft.commit();
+            ft.addToBackStack("Search");
         }
         else if(id == R.id.action_third_item)
         {
-            FragmentManager fm=getSupportFragmentManager();
-            FragmentTransaction ft=fm.beginTransaction();
+
             if(mapFragment == null)
             {
                 mapFragment = new MapFragment();
             }
             ft.replace(R.id.frameLayout , mapFragment);
-            ft.addToBackStack("Map");
             ft.commit();
+            ft.addToBackStack("Map");
         }
         return false;
     }
+
 
     @Override
     public void bottomNavMoved(String id) {

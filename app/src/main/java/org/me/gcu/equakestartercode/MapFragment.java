@@ -20,29 +20,25 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapFragment extends Fragment {
-    private List<Item> items;
+    private List<Item> items = new ArrayList<Item>();
     private IBottomNavMove bottomNavMove;
-
+    private boolean map = false;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            for(int i = 0 ; i < items.size() ; i++){
-                addMarker(items.get(i) , googleMap);
-            }
+                for (int i = 0; i < items.size(); i++) {
+                    addMarker(items.get(i), googleMap);
+                }
+                LatLng latLng = new LatLng(54.576519, -2.77954);
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5));
+
         }
+
     };
 
     @Nullable
@@ -58,15 +54,18 @@ public class MapFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment != null) {
+        if(map == false) {
             mapFragment.getMapAsync(callback);
+            map = true;
         }
+
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
         itemViewModel.getItems().observe(this  , listItems -> {
             items = listItems;
         });
         bottomNavMove = (IBottomNavMove) getActivity();
     }
+
 
     @Override
     public void onResume() {

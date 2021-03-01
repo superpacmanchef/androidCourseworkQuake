@@ -1,10 +1,6 @@
 package org.me.gcu.equakestartercode;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -20,7 +16,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemViewModel extends ViewModel implements AsyncResponse {
+public class ItemViewModel extends ViewModel implements IAsyncResponse {
     private MutableLiveData<List<Item>> items;
     private static String urlSource = "http://quakes.bgs.ac.uk/feeds/MhSeismology.xml";
 

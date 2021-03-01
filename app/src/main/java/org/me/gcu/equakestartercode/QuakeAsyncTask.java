@@ -11,7 +11,7 @@ import java.net.URLConnection;
 
 public class QuakeAsyncTask extends AsyncTask<String , Void , String >
 {
-    public AsyncResponse listener = null;
+    public IAsyncResponse listener = null;
     @Override
     protected String doInBackground(String... strings) {
         String result = "";
