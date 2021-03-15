@@ -24,6 +24,7 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
     private TextView depthText;
     private TextView magText;
     private TextView catagoryText;
+    private TextView linkText;
     private Item selectedItem;
     private  MapView mapView;
 
@@ -33,6 +34,7 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quake_more);
         getSupportActionBar().setTitle("Quake Info");
+
         selectedItem = (Item)getIntent().getExtras().getSerializable("Item") ;
         locationText = (TextView)findViewById(R.id.locationText);
         locationText.setText(selectedItem.getLocation());
@@ -48,12 +50,12 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
         magText.setText(selectedItem.getMagnitude());
         catagoryText = (TextView)findViewById(R.id.catagoryText);
         catagoryText.setText(selectedItem.getCategory());
+        linkText = (TextView)findViewById(R.id.linkText);
+        linkText.setText(selectedItem.getLink());
 
         mapView = findViewById(R.id.itemLocation);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-
-
     }
 
     @Override

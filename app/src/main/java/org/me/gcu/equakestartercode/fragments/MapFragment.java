@@ -46,6 +46,7 @@ public class MapFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
+    //TODO: ADD MARKER SEVERNESS CHECKBOX TO SHOW AND UNSHOW PINS
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

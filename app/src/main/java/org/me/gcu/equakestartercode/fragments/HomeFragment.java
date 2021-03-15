@@ -21,6 +21,8 @@ import org.me.gcu.equakestartercode.models.Item;
 import org.me.gcu.equakestartercode.viewmodels.ItemViewModel;
 import org.me.gcu.equakestartercode.R;
 
+import java.util.Collections;
+
 public class HomeFragment extends Fragment {
 
     private LinearLayout liner;
@@ -50,7 +52,7 @@ public class HomeFragment extends Fragment {
         bottomNavMove.bottomNavMoved("Home");
     }
 
-    //TODO : REDO THIS CAUSE ITS SHIT
+    //TODO : REDO THIS CAUSE ITS SHIT ALSO ADD HIGH TO LOW AND LOW TO HIGH SORTING
     private void startProgress()
     {
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
@@ -69,21 +71,31 @@ public class HomeFragment extends Fragment {
                 param.setMargins(8, 0, 8, 0);
             }
 
+            Collections.sort(items);
             for (int i = 0; i < items.size(); i++)
             {
                     Item selectedItem = items.get(i);
                     QuakeButton btn = new QuakeButton(getContext() , selectedItem , param);
 
-                    if(orientaion == true) {
-                        if (i % 2 == 0) {
-                            linearLayout = new LinearLayout(getContext());
-                            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                if(orientaion == true) {
+                    if(i % 2 == 0 && i == items.size() -1 ) {
+                        linearLayout = new LinearLayout(getContext());
+
+                        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                        linearLayout.addView(btn);
+                        liner.addView(linearLayout);
+                    }
+                   else if (i % 2 == 0) {
+                        linearLayout = new LinearLayout(getContext());
+
+                        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                             linearLayout.addView(btn);
                         } else {
                             linearLayout.addView(btn);
                             liner.addView(linearLayout);
-                        }
-                    } else {
+                    }
+
+                } else {
                         liner.addView(btn);
                     }
             }

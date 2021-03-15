@@ -54,7 +54,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private ScrollView sc;
     private IBottomNavMove bottomNavMove;
 
-
+    //TODO: REJIG LANDSCAPE VIEW
     public SearchFragment() {
         // Required empty public constructor
     }

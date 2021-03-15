@@ -4,7 +4,7 @@ import android.util.Log;
 
 import java.io.Serializable;
 
-public class Item  implements Serializable {
+public class Item  implements Serializable, Comparable< Item > {
 
     private String title;
     private  String description;
@@ -131,4 +131,10 @@ public class Item  implements Serializable {
     }
 
 
+    @Override
+    public int compareTo(Item i) {
+        Float mag1 = Float.parseFloat(this.getMagnitude());
+        Float mag2 = Float.parseFloat(i.getMagnitude());
+        return mag1.compareTo(mag2);
+    }
 }
