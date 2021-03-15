@@ -1,4 +1,4 @@
-package org.me.gcu.equakestartercode;
+package org.me.gcu.equakestartercode.models;
 
 import android.util.Log;
 
@@ -29,7 +29,7 @@ public class Item  implements Serializable {
 
     public Item(){}
 
-    //Getter
+    //Getters
     public String getTitle() {
         return title;
     }
@@ -72,7 +72,7 @@ public class Item  implements Serializable {
 
 
 
-    //Setter
+    //Setters
     public void setTitle(String title) {
         this.title = title;
     }

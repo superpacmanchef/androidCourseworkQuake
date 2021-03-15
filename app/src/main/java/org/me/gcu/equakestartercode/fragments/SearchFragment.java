@@ -1,4 +1,4 @@
-package org.me.gcu.equakestartercode;
+package org.me.gcu.equakestartercode.fragments;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -10,17 +10,25 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
+
+import org.me.gcu.equakestartercode.UIComponents.QuakeButton;
+import org.me.gcu.equakestartercode.interfaces.IBottomNavMove;
+import org.me.gcu.equakestartercode.models.Item;
+import org.me.gcu.equakestartercode.viewmodels.ItemViewModel;
+import org.me.gcu.equakestartercode.activites.QuakeActivity;
+import org.me.gcu.equakestartercode.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,15 +44,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private EditText endDate;
     private DatePickerDialog.OnDateSetListener from_dateListener, to_dateListener;
     private List<Item> items;
-    private LinearLayout eastLinear;
-    private LinearLayout westLinear;
-    private LinearLayout northLinear;
-    private LinearLayout southLinear;
-    private LinearLayout biggestLinear;
-    private LinearLayout deepestLinear;
-    private LinearLayout shallowestLinear;
-
-
+    private FrameLayout eastFrame;
+    private FrameLayout westFrame;
+    private FrameLayout northFrame;
+    private FrameLayout southFrame;
+    private FrameLayout bigFrame;
+    private FrameLayout deepFrame;
+    private FrameLayout shallowFrame;
+    private ScrollView sc;
     private IBottomNavMove bottomNavMove;
 
 
@@ -58,15 +65,25 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Get View Model Data Shares instance with Activity (Main Activity)
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
         itemViewModel.getItems().observe(this, listItems -> {
             items = listItems;
         });
+
+        eastFrame = (FrameLayout)view.findViewById(R.id.eastFrame);
+        westFrame = (FrameLayout)view.findViewById(R.id.westFrame);
+        northFrame = (FrameLayout)view.findViewById(R.id.northFrame);
+        southFrame = (FrameLayout)view.findViewById(R.id.southFrame);
+        bigFrame = (FrameLayout)view.findViewById(R.id.bigFrame);
+        deepFrame = (FrameLayout)view.findViewById(R.id.deepFrame);
+        shallowFrame = (FrameLayout)view.findViewById(R.id.shallowFrame);
+        sc = (ScrollView) getView().findViewById(R.id.scrollView3);
+
 
         //Sets EditTexts startDate and endDate to uneditable and on press show DatePickerDialog.
         startDate = (EditText) view.findViewById(R.id.startDate);
@@ -113,14 +130,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         search = (Button) view.findViewById(R.id.search);
         search.setOnClickListener(this::onClick);
 
-        eastLinear = (LinearLayout) view.findViewById(R.id.eastLinear);
-        westLinear = (LinearLayout) view.findViewById(R.id.westLinear);
-        northLinear = (LinearLayout) view.findViewById(R.id.northLinear);
-        southLinear = (LinearLayout) view.findViewById(R.id.southLinear);
-        biggestLinear = (LinearLayout) view.findViewById(R.id.biggestLinear);
-        deepestLinear = (LinearLayout) view.findViewById(R.id.deepestLinear);
-        shallowestLinear = (LinearLayout) view.findViewById(R.id.shallowestLinear);
-
         bottomNavMove = (IBottomNavMove) getActivity();
     }
 
@@ -141,7 +150,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private void searchDate(String startDate, String endDate) {
         Date startDateDate = parseDate(startDate);
         Date endDateDate = parseDate(endDate);
-        ArrayList<Item> itemList = new ArrayList<Item>();
+        ArrayList<Item> itemList = new ArrayList<>();
 
         Item leftist = null;
         Item rightist = null;
@@ -204,59 +213,59 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         }
 
         //Sets text of each of the specific Items.
-        ScrollView sc = (ScrollView) getView().findViewById(R.id.scrollView3);
         sc.setVisibility(View.VISIBLE);
+        eastFrame.removeAllViews();
+        northFrame.removeAllViews();
+        westFrame.removeAllViews();
+        southFrame.removeAllViews();
+        bigFrame.removeAllViews();
+        deepFrame.removeAllViews();
+        shallowFrame.removeAllViews();
         if (itemList.size() > 0) {
-            eastLinear.addView(createButton(rightist));
-            westLinear.addView(createButton(leftist));
-            northLinear.addView(createButton(upist));
-            southLinear.addView(createButton(upist));
-            biggestLinear.addView(createButton(biggest));
-            deepestLinear.addView(createButton(deepest));
-            shallowestLinear.addView(createButton(shallowist));
-        } else {
+            eastFrame.addView(new QuakeButton(getContext() , rightist));
+            westFrame.addView(new QuakeButton(getContext() , leftist));
+            northFrame.addView(new QuakeButton(getContext() , upist));
+            southFrame.addView(new QuakeButton(getContext() , downist));
+            bigFrame.addView(new QuakeButton(getContext() , biggest));
+            deepFrame.addView(new QuakeButton(getContext() , deepest));
+            shallowFrame.addView(new QuakeButton(getContext() , shallowist));
+        } else
+            {
             String nope = "No Earthquakes recorded during that time period";
             TextView t = new TextView(requireContext());
             t.setText(nope);
-            eastLinear.addView(t);
-            westLinear.addView(t);
-            northLinear.addView(t);
-            southLinear.addView(t);
-            biggestLinear.addView(t);
-            deepestLinear.addView(t);
-            shallowestLinear.addView(t);
+            t.setGravity(Gravity.CENTER);
+            TextView s = new TextView(requireContext());
+            s.setText(nope);
+            s.setGravity(Gravity.CENTER);
+            TextView q = new TextView(requireContext());
+            q.setText(nope);
+            q.setGravity(Gravity.CENTER);
+            TextView b = new TextView(requireContext());
+            b.setText(nope);
+            b.setGravity(Gravity.CENTER);
+            TextView n = new TextView(requireContext());
+            n.setText(nope);
+            n.setGravity(Gravity.CENTER);
+            TextView h = new TextView(requireContext());
+            h.setText(nope);
+            h.setGravity(Gravity.CENTER);
+            TextView m = new TextView(requireContext());
+            m.setText(nope);
+            m.setGravity(Gravity.CENTER);
+            TextView v = new TextView(requireContext());
+            v.setText(nope);
+            v.setGravity(Gravity.CENTER);
+            eastFrame.addView(t);
+            westFrame.addView(s);
+            northFrame.addView(q);
+            southFrame.addView(n);
+            bigFrame.addView(h);
+            deepFrame.addView(m);
+            shallowFrame.addView(v);
         }
-
-
     }
 
-    private Button createButton(Item selectedItem)
-    {
-
-        String location = selectedItem.getLocation();
-
-        MaterialButton btn = new MaterialButton(getContext());
-        btn.setText("location: " + location);
-        btn.setTextColor(Color.BLACK);
-        btn.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), QuakeActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("Item", selectedItem);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        });
-
-
-        if (Float.parseFloat(selectedItem.getMagnitude()) < 1) {
-            btn.setBackgroundColor(Color.GREEN);
-        } else if (Float.parseFloat(selectedItem.getMagnitude()) >= 1 && Float.parseFloat(selectedItem.getMagnitude()) < 3) {
-            btn.setBackgroundColor(Color.YELLOW);
-        } else if (Float.parseFloat(selectedItem.getMagnitude()) >= 3) {
-            btn.setBackgroundColor(Color.RED);
-        }
-        return btn;
-
-    }
     private Date parseDate(String date) {
         SimpleDateFormat dateFormatOut = new SimpleDateFormat("dd-MM-yyyy");
         Date outDate = null;

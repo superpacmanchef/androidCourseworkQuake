@@ -1,4 +1,4 @@
-package org.me.gcu.equakestartercode;
+package org.me.gcu.equakestartercode.viewmodels;
 
 import android.util.Log;
 
@@ -7,6 +7,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import org.jetbrains.annotations.NotNull;
+import org.me.gcu.equakestartercode.utility.GetXMLString;
+import org.me.gcu.equakestartercode.interfaces.IAsyncResponse;
+import org.me.gcu.equakestartercode.models.Item;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -30,9 +33,9 @@ public class ItemViewModel extends ViewModel implements IAsyncResponse {
         return items;
     }
 
-    public void loadItems()
+    private void loadItems()
     {
-        QuakeAsyncTask getQuakeData = new QuakeAsyncTask();
+        GetXMLString getQuakeData = new GetXMLString();
         getQuakeData.listener = this;
         getQuakeData.execute(urlSource);
     }
