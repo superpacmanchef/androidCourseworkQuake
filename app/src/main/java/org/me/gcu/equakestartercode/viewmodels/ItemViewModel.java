@@ -23,7 +23,7 @@ public class ItemViewModel extends ViewModel implements IAsyncResponse {
     private MutableLiveData<List<Item>> items;
     private static String urlSource = "http://quakes.bgs.ac.uk/feeds/MhSeismology.xml";
 
-    public LiveData<List<Item>> getItems()
+    public MutableLiveData<List<Item>> getItems()
     {
         if(items == null)
         {
@@ -33,19 +33,27 @@ public class ItemViewModel extends ViewModel implements IAsyncResponse {
         return items;
     }
 
+    public MutableLiveData<List<Item>> loadNewItems()
+    {       
+            items = new MutableLiveData<List<Item>>();
+            loadItems();
+            return items;
+    }
+
     private void loadItems()
     {
-        GetXMLString getQuakeData = new GetXMLString();
-        getQuakeData.listener = this;
+        GetXMLString getQuakeData = new GetXMLString(this);
         getQuakeData.execute(urlSource);
     }
 
     @Override
-    public void returnXML(String xml) {
+    public void returnXML(String xml)
+    {
         items.setValue(parseXML(xml));
     }
 
-    public List<Item> parseXML(@NotNull String XML) {
+    public List<Item> parseXML(@NotNull String XML)
+    {
         Item item = new Item();
         List<Item> list = new ArrayList<Item>();
         String unull = XML.replace("null", "");

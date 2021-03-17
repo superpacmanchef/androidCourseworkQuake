@@ -13,9 +13,12 @@ import java.net.URLConnection;
 
 public class GetXMLString extends AsyncTask<String , Void , String >
 {
-    public GetXMLString()
-    { }
-    public IAsyncResponse listener = null;
+    private IAsyncResponse listener;
+    public GetXMLString(IAsyncResponse listener)
+    {
+        this.listener = listener;
+    }
+
     @Override
     protected String doInBackground(String... strings) {
         String result = "";
@@ -42,7 +45,8 @@ public class GetXMLString extends AsyncTask<String , Void , String >
     }
 
     @Override
-    protected void onPostExecute(String s) {
+    protected void onPostExecute(String s)
+    {
         super.onPostExecute(s);
         listener.returnXML(s);
     }

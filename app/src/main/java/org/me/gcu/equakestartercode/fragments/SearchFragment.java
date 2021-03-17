@@ -1,3 +1,4 @@
+
 package org.me.gcu.equakestartercode.fragments;
 
 import android.app.DatePickerDialog;
@@ -65,6 +66,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -148,8 +150,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void searchDate(String startDate, String endDate) {
-        Date startDateDate = parseDate(startDate);
-        Date endDateDate = parseDate(endDate);
+        Date startDateDate = parseEnterDate(startDate);
+        Date endDateDate = parseEnterDate(endDate);
         ArrayList<Item> itemList = new ArrayList<>();
 
         Item leftist = null;
@@ -162,7 +164,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         //Returns list of Items which falls between startDate and endDate.
         for (int i = 0; i < items.size(); i++) {
-            Date date = stringToDate(items.get(i).getPubDate());
+            Date date = parseDataDate(items.get(i).getPubDate());
             if (date.after(startDateDate) && date.before(endDateDate)) {
                 itemList.add(items.get(i));
             }
@@ -265,8 +267,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             shallowFrame.addView(v);
         }
     }
-
-    private Date parseDate(String date) {
+    
+    //Parses Data
+    private Date parseEnterDate(String date) {
         SimpleDateFormat dateFormatOut = new SimpleDateFormat("dd-MM-yyyy");
         Date outDate = null;
         try {
@@ -277,7 +280,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         return outDate;
     }
 
-    private Date stringToDate(String date) {
+    private Date parseDataDate(String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
         Date outDate = null;
         try {

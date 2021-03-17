@@ -40,15 +40,15 @@ public class MapFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
     //TODO: ADD MARKER SEVERNESS CHECKBOX TO SHOW AND UNSHOW PINS
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) 
+    {
         super.onViewCreated(view, savedInstanceState);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
@@ -56,12 +56,14 @@ public class MapFragment extends Fragment {
             items = listItems;
         });
         mapFragment.getMapAsync(callback);
-
         bottomNavMove = (IBottomNavMove) getActivity();
     }
 
+    //Move Bottom Nav to correct position if not explciitly clcik on
+    //Bottom Nav - i.e when pressing back
     @Override
-    public void onResume() {
+    public void onResume()
+    {
         super.onResume();
         bottomNavMove.bottomNavMoved("Map");
     }

@@ -33,21 +33,26 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
+
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    {
             super.onViewCreated(view, savedInstanceState);
             liner = (LinearLayout)view.findViewById(R.id.liner);
             bottomNavMove = (IBottomNavMove)requireActivity();
             startProgress();
     }
 
+    //Move Bottom Nav to correct position if not explciitly clcik on
+    //Bottom Nav - i.e when pressing back
     @Override
-    public void onResume() {
+    public void onResume()
+    {
         super.onResume();
         bottomNavMove.bottomNavMoved("Home");
     }
