@@ -31,6 +31,7 @@ import org.me.gcu.equakestartercode.viewmodels.ItemViewModel;
 import org.me.gcu.equakestartercode.activites.QuakeActivity;
 import org.me.gcu.equakestartercode.R;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class SearchFragment extends Fragment implements View.OnClickListener {
+public class SearchFragment extends Fragment implements View.OnClickListener  {
 
     private Button search;
     private EditText startDate;
@@ -54,6 +55,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private FrameLayout shallowFrame;
     private ScrollView sc;
     private IBottomNavMove bottomNavMove;
+    private ItemViewModel itemViewModel;
 
     //TODO: REJIG LANDSCAPE VIEW
     public SearchFragment() {
@@ -61,8 +63,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
@@ -71,75 +73,87 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //Get View Model Data Shares instance with Activity (Main Activity)
-        ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
-        itemViewModel.getItems().observe(this, listItems -> {
-            items = listItems;
-        });
+            //Get View Model Data Shares instance with Activity (Main Activity)
+            itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+            itemViewModel.getItems().observe(this, listItems -> {
+                items = listItems;
+            });
 
-        eastFrame = (FrameLayout)view.findViewById(R.id.eastFrame);
-        westFrame = (FrameLayout)view.findViewById(R.id.westFrame);
-        northFrame = (FrameLayout)view.findViewById(R.id.northFrame);
-        southFrame = (FrameLayout)view.findViewById(R.id.southFrame);
-        bigFrame = (FrameLayout)view.findViewById(R.id.bigFrame);
-        deepFrame = (FrameLayout)view.findViewById(R.id.deepFrame);
-        shallowFrame = (FrameLayout)view.findViewById(R.id.shallowFrame);
-        sc = (ScrollView) getView().findViewById(R.id.scrollView3);
+            eastFrame = (FrameLayout) view.findViewById(R.id.eastFrame);
+            westFrame = (FrameLayout) view.findViewById(R.id.westFrame);
+            northFrame = (FrameLayout) view.findViewById(R.id.northFrame);
+            southFrame = (FrameLayout) view.findViewById(R.id.southFrame);
+            bigFrame = (FrameLayout) view.findViewById(R.id.bigFrame);
+            deepFrame = (FrameLayout) view.findViewById(R.id.deepFrame);
+            shallowFrame = (FrameLayout) view.findViewById(R.id.shallowFrame);
+            sc = (ScrollView) getView().findViewById(R.id.scrollView3);
 
 
-        //Sets EditTexts startDate and endDate to uneditable and on press show DatePickerDialog.
-        startDate = (EditText) view.findViewById(R.id.startDate);
-        startDate.setKeyListener(null);
-        startDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), from_dateListener, 2021, 01, 01);
-                datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
-                datePickerDialog.show();
-            }
-        });
-        from_dateListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                String t = dayOfMonth + "-" + (month + 1) + "-" + year;
-                startDate.setText(t);
-            }
-        };
+            //Sets EditTexts startDate and endDate to uneditable and on press show DatePickerDialog.
+            startDate = (EditText) view.findViewById(R.id.startDate);
+            startDate.setKeyListener(null);
+            startDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), from_dateListener, 2021, 01, 01);
+                    datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
+                    datePickerDialog.show();
+                }
+            });
+            from_dateListener = new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    String t = dayOfMonth + "-" + (month + 1) + "-" + year;
+                    startDate.setText(t);
+                }
+            };
 
-        endDate = (EditText) view.findViewById(R.id.endDate);
-        endDate.setKeyListener(null);
-        endDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), to_dateListener, 2021, 01, 01);
-                datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
+            endDate = (EditText) view.findViewById(R.id.endDate);
+            endDate.setKeyListener(null);
+            endDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), to_dateListener, 2021, 01, 01);
+                    datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
 
-                datePickerDialog.show();
-            }
-        });
-        to_dateListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                String t = dayOfMonth + "-" + (month + 1) + "-" + year;
-                endDate.setText(t);
-            }
-        };
+                    datePickerDialog.show();
+                }
+            });
+            to_dateListener = new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    String t = dayOfMonth + "-" + (month + 1) + "-" + year;
+                    endDate.setText(t);
+                }
+            };
 
-        //Sets default text for startDate and endDate to current Date.
-        startDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-        endDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+            //Sets default text for startDate and endDate to current Date.
+            startDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+            endDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 
-        search = (Button) view.findViewById(R.id.search);
-        search.setOnClickListener(this::onClick);
+            search = (Button) view.findViewById(R.id.search);
+            search.setOnClickListener(this::onClick);
 
-        bottomNavMove = (IBottomNavMove) getActivity();
+            bottomNavMove = (IBottomNavMove) getActivity();
+
     }
 
+    //Move Bottom Nav to correct position if not explicitly click on
+    //Bottom Nav - i.e when pressing back
     @Override
-    public void onResume() {
-        super.onResume();
-        //Move bottom nav selected on back press.
-        bottomNavMove.bottomNavMoved("Search");
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden == false) {
+            bottomNavMove.bottomNavMoved("Search");
+        }
+        itemViewModel.getItems().observe(this, listItems -> {
+            if(listItems != items)
+            {
+                items = listItems;
+            }
+        });
+
+
     }
 
     @Override
@@ -149,7 +163,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void searchDate(String startDate, String endDate) {
+    private void searchDate(String startDate, String endDate)
+    {
         Date startDateDate = parseEnterDate(startDate);
         Date endDateDate = parseEnterDate(endDate);
         ArrayList<Item> itemList = new ArrayList<>();
@@ -210,8 +225,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                     shallowist = currentItem;
                 }
             }
-
-
         }
 
         //Sets text of each of the specific Items.
@@ -231,8 +244,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             bigFrame.addView(new QuakeButton(getContext() , biggest));
             deepFrame.addView(new QuakeButton(getContext() , deepest));
             shallowFrame.addView(new QuakeButton(getContext() , shallowist));
-        } else
-            {
+        }
+        else {
             String nope = "No Earthquakes recorded during that time period";
             TextView t = new TextView(requireContext());
             t.setText(nope);
@@ -268,7 +281,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         }
     }
     
-    //Parses Data
+    //Parses Dates
     private Date parseEnterDate(String date) {
         SimpleDateFormat dateFormatOut = new SimpleDateFormat("dd-MM-yyyy");
         Date outDate = null;

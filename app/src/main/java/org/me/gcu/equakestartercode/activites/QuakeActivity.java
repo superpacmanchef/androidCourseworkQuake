@@ -66,8 +66,7 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
         addMarker(selectedItem , googleMap);
     }
 
-    private void addMarker(Item item , GoogleMap googleMap)
-    {
+    private void addMarker(Item item , GoogleMap googleMap) {
         if (Float.parseFloat(item.getMagnitude()) < 1) {
             googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(item.getGeoLat()) , Double.parseDouble(item.getGeoLong()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(item.getLocation()));
         } else if (Float.parseFloat(item.getMagnitude()) >= 1 && Float.parseFloat(item.getMagnitude()) < 3) {
