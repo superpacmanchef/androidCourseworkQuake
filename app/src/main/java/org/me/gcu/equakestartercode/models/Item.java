@@ -1,10 +1,12 @@
 package org.me.gcu.equakestartercode.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.Serializable;
 
-public class Item  implements Serializable, Comparable< Item > {
+public class Item implements Serializable, Comparable , Parcelable {
 
     private String title;
     private  String description;
@@ -28,6 +30,31 @@ public class Item  implements Serializable, Comparable< Item > {
     }
 
     public Item(){}
+
+    protected Item(Parcel in) {
+        title = in.readString();
+        description = in.readString();
+        link = in.readString();
+        pubDate = in.readString();
+        category = in.readString();
+        geoLat = in.readString();
+        geoLong = in.readString();
+        location = in.readString();
+        depth = in.readString();
+        magnitude = in.readString();
+    }
+
+    public static final Creator<Item> CREATOR = new Creator<Item>() {
+        @Override
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+
+        @Override
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 
     //Getters
     public String getTitle() {
@@ -130,9 +157,28 @@ public class Item  implements Serializable, Comparable< Item > {
         this.magnitude = magnitude;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     @Override
-    public int compareTo(Item i) {
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(link);
+        dest.writeString(pubDate);
+        dest.writeString(category);
+        dest.writeString(geoLat);
+        dest.writeString(geoLong);
+        dest.writeString(location);
+        dest.writeString(depth);
+        dest.writeString(magnitude);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Item i = (Item) o;
         Float mag1 = Float.parseFloat(this.getMagnitude());
         Float mag2 = Float.parseFloat(i.getMagnitude());
         return mag1.compareTo(mag2);

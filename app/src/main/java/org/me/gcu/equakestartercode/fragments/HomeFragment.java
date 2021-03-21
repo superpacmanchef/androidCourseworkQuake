@@ -36,7 +36,7 @@ public class HomeFragment extends Fragment{
 
     private LinearLayout liner;
     private IBottomNavMove bottomNavMove;
-    private List<Item> items ;
+    private ArrayList<Item> items ;
     private ItemViewModel itemViewModel;
     private SwipeRefreshLayout swipeRefresh;
     public HomeFragment() {
@@ -52,7 +52,6 @@ public class HomeFragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         liner = (LinearLayout) view.findViewById(R.id.liner);
         itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
         swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
@@ -62,32 +61,31 @@ public class HomeFragment extends Fragment{
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // cancle the Visual indication of a refresh
+                        //Cancel the Visual indication of a refresh
                         swipeRefresh.setRefreshing(false);
-                        // Generate a random integer number
-                        thing();
+                        //Get new items and display
+                        displayItems();
                     }
-                }, 3000);
+                }, 1500);
             }
         });
-
         bottomNavMove = (IBottomNavMove) requireActivity();
         itemViewModel.getItems().observe(this, listItems -> {
-                Collections.sort(listItems);
-                items = listItems;
-                startThing();
-        });
-
-    }
-
-
-    private void thing(){
-        itemViewModel.getItems().observe(this, listItems -> {
-            Collections.sort(listItems);
+            Collections.sort(listItems , Collections.reverseOrder());
             items = listItems;
-            startThing();
+            if(savedInstanceState == null)
+            {
+                displayItems();
+            }
         });
+        if(savedInstanceState != null)
+        {
+            items = savedInstanceState.getParcelableArrayList("items");
+            displayItems();
+        }
     }
+
+
 
     //Move Bottom Nav to correct position if not explciitly clcik on
     //Bottom Nav - i.e when pressing back
@@ -97,21 +95,19 @@ public class HomeFragment extends Fragment{
         if(hidden == false) {
             bottomNavMove.bottomNavMoved("Home");
         }
-        itemViewModel.getItems().observe(this, listItems -> {
-            Collections.sort(listItems);
-            if(listItems != items) {
-                items = listItems;
-                startThing();
-            }
-        });
     }
 
-    private void startThing() {
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("items" , items);
+    }
+
+    private void displayItems() {
         liner.removeAllViews();
         LinearLayout linearLayout = null;
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         boolean orientaion = false;
-
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             orientaion = true;
             param = new LinearLayout.LayoutParams(
@@ -120,7 +116,6 @@ public class HomeFragment extends Fragment{
                     0.7f);
             param.setMargins(8, 0, 8, 0);
         }
-
 
         for (int i = 0; i < items.size(); i++) {
             Item selectedItem = items.get(i);
@@ -135,7 +130,6 @@ public class HomeFragment extends Fragment{
                     liner.addView(linearLayout);
                 } else if (i % 2 == 0) {
                     linearLayout = new LinearLayout(getContext());
-
                     linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                     linearLayout.addView(btn);
                 } else {

@@ -20,20 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemViewModel extends ViewModel implements IAsyncResponse {
-    private MutableLiveData<List<Item>> items;
+    private MutableLiveData<ArrayList<Item>> items;
     private static String urlSource = "http://quakes.bgs.ac.uk/feeds/MhSeismology.xml";
 
-    public MutableLiveData<List<Item>> getItems() {
+    public MutableLiveData<ArrayList<Item>> getItems() {
         if(items == null)
         {
-            items = new MutableLiveData<List<Item>>();
+            items = new MutableLiveData<ArrayList<Item>>();
             loadItems();
         }
         return items;
     }
 
-    public MutableLiveData<List<Item>> loadNewItems() {
-            items = new MutableLiveData<List<Item>>();
+    public MutableLiveData<ArrayList<Item>> loadNewItems() {
+            items = new MutableLiveData<ArrayList<Item>>();
             loadItems();
             return items;
     }
@@ -49,12 +49,12 @@ public class ItemViewModel extends ViewModel implements IAsyncResponse {
         items.setValue(parseXML(xml));
     }
 
-    public List<Item> parseXML(@NotNull String XML) {
+    private ArrayList<Item> parseXML(@NotNull String XML) {
         Item item = new Item();
-        List<Item> list = new ArrayList<Item>();
-        String unull = XML.replace("null", "");
+        ArrayList<Item> list = new ArrayList<Item>();
 
         try {
+            String unull = XML.replace("null", "");
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser xpp = factory.newPullParser();
@@ -143,6 +143,5 @@ public class ItemViewModel extends ViewModel implements IAsyncResponse {
             Log.e("MyTag", "IO error during parsing");
         }
         return list;
-
     }
 }

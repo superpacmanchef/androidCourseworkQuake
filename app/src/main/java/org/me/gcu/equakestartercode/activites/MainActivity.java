@@ -2,21 +2,16 @@ package org.me.gcu.equakestartercode.activites;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
-import org.me.gcu.equakestartercode.fragments.SerializableFragment;
 import org.me.gcu.equakestartercode.viewmodels.ItemViewModel;
 import org.me.gcu.equakestartercode.R;
 import org.me.gcu.equakestartercode.fragments.HomeFragment;
@@ -41,85 +36,81 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null)
-        {
-            currentFragment = savedInstanceState.getString("current");
+
+        setContentView(R.layout.activity_main);
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav_view);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
+
+        itemViewModel = new ItemViewModel();
+        itemViewModel.getItems();
+
+        //Get fragments. Will be null on first load.
+        homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("Home");
+        searchFragment = (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
+        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag("Map");
+
+        //If
+        //First load of Activity create all and add fragments to activity and hide.
+        //Make current tag home fragment tag and show Home Fragment.
+        //Else (such as re-orientating)
+        //Check currentFragment name and show corresponding fragment.
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if(savedInstanceState == null){
+                homeFragment = new HomeFragment();
+                fragmentTransaction.add(R.id.frameLayout , homeFragment , "Home");
+                fragmentTransaction.hide(homeFragment);
+
+                searchFragment = new SearchFragment();
+                fragmentTransaction.add(R.id.frameLayout , searchFragment , "Search");
+                fragmentTransaction.hide(searchFragment);
+
+                mapFragment = new MapFragment();
+                fragmentTransaction.add(R.id.frameLayout , mapFragment , "Map");
+                fragmentTransaction.hide(mapFragment);
+
+                currentFragment = homeFragment.getTag();
+                fragmentTransaction.show(homeFragment);
         }
-            setContentView(R.layout.activity_main);
-            bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav_view);
-            bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
-            itemViewModel = new ItemViewModel();
-            itemViewModel.getItems();
+        else{
+            currentFragment = savedInstanceState.getString("current");
 
-            homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("Home");
-            searchFragment = (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
-            mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag("Map");
-
-                if(homeFragment == null)
-                {
-                    homeFragment = new HomeFragment();
-                    getSupportFragmentManager().beginTransaction().add(R.id.frameLayout , homeFragment , "Home").commit();
-                    getSupportFragmentManager().beginTransaction().hide(homeFragment).commit();
-                }
-                if(searchFragment == null)
-                {
-                    searchFragment = new SearchFragment();
-                    getSupportFragmentManager().beginTransaction().add(R.id.frameLayout , searchFragment , "Search").commit();
-                    getSupportFragmentManager().beginTransaction().hide(searchFragment).commit();
-                }
-                if(mapFragment == null)
-                {
-                    mapFragment = new MapFragment();
-                    getSupportFragmentManager().beginTransaction().add(R.id.frameLayout , mapFragment , "Map").commit();
-                    getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
-                }
-
-                if(currentFragment != null) {
-                    if (currentFragment == homeFragment.getTag()) {
+            if (currentFragment == homeFragment.getTag()) {
                         currentFragment = homeFragment.getTag();
-                        getSupportFragmentManager().beginTransaction().show(homeFragment).commit();
-                        getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
-                        getSupportFragmentManager().beginTransaction().hide(searchFragment).commit();
-                        getSupportFragmentManager().beginTransaction().addToBackStack("Home").commit();
-                    } else if (currentFragment == searchFragment.getTag()) {
+                        fragmentTransaction.show(homeFragment);
+                        fragmentTransaction.hide(mapFragment);
+                        fragmentTransaction.hide(searchFragment);
+
+                } else if (currentFragment == searchFragment.getTag()) {
                         currentFragment = searchFragment.getTag();
-                        getSupportFragmentManager().beginTransaction().hide(homeFragment).commit();
-                        getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
-                        getSupportFragmentManager().beginTransaction().show(searchFragment).commit();
-                        getSupportFragmentManager().beginTransaction().addToBackStack("Search").commit();
-                    } else if (currentFragment == mapFragment.getTag()) {
+                        fragmentTransaction.hide(homeFragment);
+                        fragmentTransaction.hide(mapFragment);
+                        fragmentTransaction.show(searchFragment);
+                } else if (currentFragment == mapFragment.getTag()) {
                         currentFragment = mapFragment.getTag();
-                        getSupportFragmentManager().beginTransaction().show(mapFragment).commit();
-                        getSupportFragmentManager().beginTransaction().hide(homeFragment).commit();
-                        getSupportFragmentManager().beginTransaction().hide(searchFragment).commit();
-                        getSupportFragmentManager().beginTransaction().addToBackStack("Map").commit();
-                    }
-                }else{
-                    currentFragment = homeFragment.getTag();
-                    getSupportFragmentManager().beginTransaction().show(homeFragment).commit();
-                    getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
-                    getSupportFragmentManager().beginTransaction().hide(searchFragment).commit();
-                    getSupportFragmentManager().beginTransaction().addToBackStack("Home").commit();
+                        fragmentTransaction.show(mapFragment);
+                        fragmentTransaction.hide(homeFragment);
+                        fragmentTransaction.hide(searchFragment);
+
                 }
+        }
+        fragmentTransaction.commit();
 
-
-            //load new items every 10 minuets
-            final Handler handler = new Handler();
-            Timer timer = new Timer();
-            TimerTask doAsynchronousTask = new TimerTask() {
-                @Override
-                public void run() {
-                    handler.post(new Runnable() {
+        //load new items every 10 minuets
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
                         public void run() {
                             try {
                                 itemViewModel.loadNewItems();
                             } catch (Exception e) {
                             }
                         }
-                    });
-                }
-            };
-            timer.schedule(doAsynchronousTask, 0, 60000); //execute in every 10 minutes
+                    }); }
+        };
+        timer.schedule(doAsynchronousTask, 0, 600000); //execute in every 10 minutes
     }
 
     //Saves current Fragment tag when re-orientating
@@ -133,23 +124,29 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         item.setChecked(true);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        transaction.hide(getSupportFragmentManager().findFragmentByTag(currentFragment));
-        if(bottomNavigationView.getMenu().getItem(0).isChecked())
-        {
-            currentFragment = homeFragment.getTag();
-            transaction.show(homeFragment);
-            transaction.addToBackStack("Home");
-        } else if(bottomNavigationView.getMenu().getItem(1).isChecked())
-        {
-            currentFragment = searchFragment.getTag();
-            transaction.show(searchFragment);
-            transaction.addToBackStack("Search");
-        } else if(bottomNavigationView.getMenu().getItem(2).isChecked())
-        {
-            currentFragment = mapFragment.getTag();
-            transaction.show(mapFragment);
-            transaction.addToBackStack("Map");
+        if(bottomNavigationView.getMenu().getItem(0).isChecked()) {
+            if(currentFragment != homeFragment.getTag()) {
+                transaction.hide(getSupportFragmentManager().findFragmentByTag(currentFragment));
+                currentFragment = homeFragment.getTag();
+                transaction.show(homeFragment);
+                transaction.addToBackStack("Home");
+            }
+        }
+        else if(bottomNavigationView.getMenu().getItem(1).isChecked()) {
+            if(currentFragment != searchFragment.getTag()) {
+                transaction.hide(getSupportFragmentManager().findFragmentByTag(currentFragment));
+                currentFragment = searchFragment.getTag();
+                transaction.show(searchFragment);
+                transaction.addToBackStack("Search");
+            }
+        }
+        else if(bottomNavigationView.getMenu().getItem(2).isChecked()) {
+            if(currentFragment != mapFragment.getTag()) {
+                transaction.hide(getSupportFragmentManager().findFragmentByTag(currentFragment));
+                currentFragment = mapFragment.getTag();
+                transaction.show(mapFragment);
+                transaction.addToBackStack("Map");
+            }
         }
         transaction.commit();
         return false;

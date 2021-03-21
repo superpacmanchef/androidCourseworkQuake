@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +48,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
     private EditText startDate;
     private EditText endDate;
     private DatePickerDialog.OnDateSetListener from_dateListener, to_dateListener;
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
     private FrameLayout eastFrame;
     private FrameLayout westFrame;
     private FrameLayout northFrame;
@@ -56,6 +59,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
     private ScrollView sc;
     private IBottomNavMove bottomNavMove;
     private ItemViewModel itemViewModel;
+    private ArrayList<Item> searchItems = new ArrayList<>();
+    private Item leftist = null;
+    private Item rightist = null;
+    private Item upist = null;
+    private Item downist = null;
+    private Item biggest = null;
+    private Item deepest = null;
+    private Item shallowist = null;
+    private boolean hasPressed = false;
 
     //TODO: REJIG LANDSCAPE VIEW
     public SearchFragment() {
@@ -63,8 +75,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
@@ -78,7 +89,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
             itemViewModel.getItems().observe(this, listItems -> {
                 items = listItems;
             });
-
             eastFrame = (FrameLayout) view.findViewById(R.id.eastFrame);
             westFrame = (FrameLayout) view.findViewById(R.id.westFrame);
             northFrame = (FrameLayout) view.findViewById(R.id.northFrame);
@@ -87,7 +97,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
             deepFrame = (FrameLayout) view.findViewById(R.id.deepFrame);
             shallowFrame = (FrameLayout) view.findViewById(R.id.shallowFrame);
             sc = (ScrollView) getView().findViewById(R.id.scrollView3);
-
 
             //Sets EditTexts startDate and endDate to uneditable and on press show DatePickerDialog.
             startDate = (EditText) view.findViewById(R.id.startDate);
@@ -133,9 +142,24 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
 
             search = (Button) view.findViewById(R.id.search);
             search.setOnClickListener(this::onClick);
-
             bottomNavMove = (IBottomNavMove) getActivity();
 
+        //On orientation change set hasPressed to previous saved value.
+        if(savedInstanceState != null) {
+            searchItems = savedInstanceState.getParcelableArrayList("searchItems");
+            hasPressed = savedInstanceState.getBoolean("hasPressed");
+            if(hasPressed == true) {
+                getExtremes();
+            }
+        }
+    }
+
+    //On orientation change save hasPressed value
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("searchItems",  searchItems);
+        outState.putBoolean("hasPressed" , hasPressed);
     }
 
     //Move Bottom Nav to correct position if not explicitly click on
@@ -146,49 +170,37 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
         if(hidden == false) {
             bottomNavMove.bottomNavMoved("Search");
         }
-        itemViewModel.getItems().observe(this, listItems -> {
-            if(listItems != items)
-            {
-                items = listItems;
-            }
-        });
-
-
     }
 
+    //Run searchDate().
     @Override
     public void onClick(View v) {
         if (v == search) {
+            hasPressed = true;
             searchDate(startDate.getText().toString(), endDate.getText().toString());
         }
     }
 
-    private void searchDate(String startDate, String endDate)
-    {
+    //Takes startDate and endDate and sets leftist , rightest ... ect Items
+    //Then runs displayItems
+    private void searchDate(String startDate, String endDate) {
         Date startDateDate = parseEnterDate(startDate);
         Date endDateDate = parseEnterDate(endDate);
-        ArrayList<Item> itemList = new ArrayList<>();
-
-        Item leftist = null;
-        Item rightist = null;
-        Item upist = null;
-        Item downist = null;
-        Item biggest = null;
-        Item deepest = null;
-        Item shallowist = null;
-
+        searchItems = new ArrayList<>();
         //Returns list of Items which falls between startDate and endDate.
         for (int i = 0; i < items.size(); i++) {
             Date date = parseDataDate(items.get(i).getPubDate());
             if (date.after(startDateDate) && date.before(endDateDate)) {
-                itemList.add(items.get(i));
+                searchItems.add(items.get(i));
             }
         }
+        getExtremes();
+    }
 
-        //Returns the leftist , rightist etc... from the list of Items.
-        for (int j = 0; j < itemList.size(); j++) {
-            Item currentItem = itemList.get(j);
-
+    //Returns the leftist , rightist etc... from the list of Items.
+    private void getExtremes() {
+        for (int j = 0; j < searchItems.size(); j++) {
+            Item currentItem = searchItems.get(j);
             if (j == 0) {
                 leftist = currentItem;
                 rightist = currentItem;
@@ -227,61 +239,38 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
             }
         }
 
-        //Sets text of each of the specific Items.
-        sc.setVisibility(View.VISIBLE);
-        eastFrame.removeAllViews();
-        northFrame.removeAllViews();
-        westFrame.removeAllViews();
-        southFrame.removeAllViews();
-        bigFrame.removeAllViews();
-        deepFrame.removeAllViews();
-        shallowFrame.removeAllViews();
-        if (itemList.size() > 0) {
-            eastFrame.addView(new QuakeButton(getContext() , rightist));
-            westFrame.addView(new QuakeButton(getContext() , leftist));
-            northFrame.addView(new QuakeButton(getContext() , upist));
-            southFrame.addView(new QuakeButton(getContext() , downist));
-            bigFrame.addView(new QuakeButton(getContext() , biggest));
-            deepFrame.addView(new QuakeButton(getContext() , deepest));
-            shallowFrame.addView(new QuakeButton(getContext() , shallowist));
-        }
-        else {
-            String nope = "No Earthquakes recorded during that time period";
-            TextView t = new TextView(requireContext());
-            t.setText(nope);
-            t.setGravity(Gravity.CENTER);
-            TextView s = new TextView(requireContext());
-            s.setText(nope);
-            s.setGravity(Gravity.CENTER);
-            TextView q = new TextView(requireContext());
-            q.setText(nope);
-            q.setGravity(Gravity.CENTER);
-            TextView b = new TextView(requireContext());
-            b.setText(nope);
-            b.setGravity(Gravity.CENTER);
-            TextView n = new TextView(requireContext());
-            n.setText(nope);
-            n.setGravity(Gravity.CENTER);
-            TextView h = new TextView(requireContext());
-            h.setText(nope);
-            h.setGravity(Gravity.CENTER);
-            TextView m = new TextView(requireContext());
-            m.setText(nope);
-            m.setGravity(Gravity.CENTER);
-            TextView v = new TextView(requireContext());
-            v.setText(nope);
-            v.setGravity(Gravity.CENTER);
-            eastFrame.addView(t);
-            westFrame.addView(s);
-            northFrame.addView(q);
-            southFrame.addView(n);
-            bigFrame.addView(h);
-            deepFrame.addView(m);
-            shallowFrame.addView(v);
-        }
+        displayItems();
+    }
+
+    //Removes views from each Frame
+    //Displays each corresponding Item as a QuakeButton
+    private void displayItems() {
+            //Sets text of each of the specific Items.
+            sc.setVisibility(View.VISIBLE);
+            eastFrame.removeAllViews();
+            northFrame.removeAllViews();
+            westFrame.removeAllViews();
+            southFrame.removeAllViews();
+            bigFrame.removeAllViews();
+            deepFrame.removeAllViews();
+            shallowFrame.removeAllViews();
+            if (searchItems.size() > 0) {
+                eastFrame.addView(new QuakeButton(getContext(), rightist));
+                westFrame.addView(new QuakeButton(getContext(), leftist));
+                northFrame.addView(new QuakeButton(getContext(), upist));
+                southFrame.addView(new QuakeButton(getContext(), downist));
+                bigFrame.addView(new QuakeButton(getContext(), biggest));
+                deepFrame.addView(new QuakeButton(getContext(), deepest));
+                shallowFrame.addView(new QuakeButton(getContext(), shallowist));
+            } else {
+                String nope = "No Earthquakes recorded during that time period";
+                TextView t = new TextView(requireContext());
+                t.setText(nope);
+                eastFrame.addView(t);
+            }
     }
     
-    //Parses Dates
+    //Parses Date enter with calender
     private Date parseEnterDate(String date) {
         SimpleDateFormat dateFormatOut = new SimpleDateFormat("dd-MM-yyyy");
         Date outDate = null;
@@ -293,6 +282,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
         return outDate;
     }
 
+    //Parses Date from the xml
     private Date parseDataDate(String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
         Date outDate = null;
@@ -304,6 +294,4 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
         return outDate;
 
     }
-
-
 }
