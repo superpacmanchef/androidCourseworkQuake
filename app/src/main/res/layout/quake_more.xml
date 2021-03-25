@@ -41,7 +41,7 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <LinearLayout
-                    android:id="@+id/linearLayout5"
+                    android:id="@+id/infoLinear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -239,7 +239,8 @@
                             android:layout_marginLeft="8dp"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            android:visibility="visible" />
 
                     </LinearLayout>
 
@@ -257,8 +258,21 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+                    app:layout_constraintTop_toBottomOf="@+id/infoLinear"
                     app:layout_constraintVertical_bias="0.517" />
+
+                <TextView
+                    android:id="@+id/errorText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Error: No Quake Data was Found"
+                    android:textSize="24sp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/locationText"
+                    app:layout_constraintVertical_bias="0.39" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

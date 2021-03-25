@@ -50,7 +50,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/locationText">
 
                     <LinearLayout
-                        android:id="@+id/linearLayout5"
+                        android:id="@+id/infoLinear"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
@@ -256,6 +256,19 @@
                         android:layout_weight="0.5"
                         android:apiKey="@string/google_maps_key" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/errorText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Error: No Quake Data was Found"
+                    android:textSize="30sp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/locationText"
+                    app:layout_constraintVertical_bias="0.39" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

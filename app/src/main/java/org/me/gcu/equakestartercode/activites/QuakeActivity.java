@@ -1,6 +1,8 @@
 package org.me.gcu.equakestartercode.activites;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,8 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
     private TextView linkText;
     private Item selectedItem;
     private  MapView mapView;
+    private LinearLayout infoLinear;
+    private TextView errortext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,25 +38,43 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.quake_more);
         getSupportActionBar().setTitle("Quake Info");
 
-        //TODO: show error message if aint nothing there.
-        selectedItem = (Item)getIntent().getExtras().getSerializable("Item") ;
+        try {
+            selectedItem = (Item)getIntent().getExtras().getSerializable("Item") ;
+        }
+        catch (Exception e) {
+            selectedItem = null;
+        }
+
 
         locationText = (TextView)findViewById(R.id.locationText);
-        locationText.setText(selectedItem.getLocation());
         dateText = (TextView)findViewById(R.id.dateText);
-        dateText.setText(selectedItem.getPubDate());
         latText = (TextView)findViewById(R.id.latText);
-        latText.setText(selectedItem.getGeoLat());
         longText = (TextView)findViewById(R.id.longText);
-        longText.setText(selectedItem.getGeoLong());
         depthText = (TextView)findViewById(R.id.depthText);
-        depthText.setText(selectedItem.getDepth());
         magText = (TextView)findViewById(R.id.magText);
-        magText.setText(selectedItem.getMagnitude());
         catagoryText = (TextView)findViewById(R.id.catagoryText);
-        catagoryText.setText(selectedItem.getCategory());
         linkText = (TextView)findViewById(R.id.linkText);
-        linkText.setText(selectedItem.getLink());
+        infoLinear = (LinearLayout)findViewById(R.id.infoLinear);
+        errortext = (TextView)findViewById(R.id.errorText);
+
+        if(selectedItem != null) {
+            longText.setText(selectedItem.getGeoLong());
+            magText.setText(selectedItem.getMagnitude());
+            depthText.setText(selectedItem.getDepth());
+            catagoryText.setText(selectedItem.getCategory());
+            linkText.setText(selectedItem.getLink());
+            locationText.setText(selectedItem.getLocation());
+            latText.setText(selectedItem.getGeoLat());
+            dateText.setText(selectedItem.getPubDate());
+        }else
+        {
+            infoLinear.setVisibility(View.INVISIBLE);
+            mapView.setVisibility(View.INVISIBLE);
+            errortext.setVisibility(View.VISIBLE);
+            locationText.setText("ERROR");
+        }
+
+
 
         mapView = findViewById(R.id.itemLocation);
         mapView.onCreate(savedInstanceState);

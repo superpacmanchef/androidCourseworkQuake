@@ -110,12 +110,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
 
             //Sets EditTexts startDate and endDate to uneditable and on press show DatePickerDialog.
             startDate = (EditText) view.findViewById(R.id.startDate);
+            startDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
             startDate.setKeyListener(null);
             startDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), from_dateListener, 2021, 01, 01);
-                    datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
+                    Date latestDate = parseEnterDate(endDate.getText().toString());
+                    datePickerDialog.getDatePicker().setMaxDate(latestDate.getTime());
                     datePickerDialog.show();
                 }
             });
@@ -128,12 +130,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
             };
 
             endDate = (EditText) view.findViewById(R.id.endDate);
+            endDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
             endDate.setKeyListener(null);
             endDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), to_dateListener, 2021, 01, 01);
                     datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
+                    Date earlyDate = parseEnterDate(startDate.getText().toString());
+                    datePickerDialog.getDatePicker().setMinDate(earlyDate.getTime());
 
                     datePickerDialog.show();
                 }
@@ -147,8 +152,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
             };
 
             //Sets default text for startDate and endDate to current Date.
-            startDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-            endDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 
             search = (Button) view.findViewById(R.id.search);
             search.setOnClickListener(this);
