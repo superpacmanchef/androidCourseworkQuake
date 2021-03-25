@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private LinearLayout liner;
     private IBottomNavMove bottomNavMove;
@@ -55,40 +55,31 @@ public class HomeFragment extends Fragment{
         liner = (LinearLayout) view.findViewById(R.id.liner);
         itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
         swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Cancel the Visual indication of a refresh
-                        swipeRefresh.setRefreshing(false);
-                        //Get new items and display
-                        displayItems();
-                    }
-                }, 1500);
-            }
-        });
+
+        //refresh list on pull up on scrollview
+        swipeRefresh.setOnRefreshListener(this);
         bottomNavMove = (IBottomNavMove) requireActivity();
+
         itemViewModel.getItems().observe(this, listItems -> {
+            //Sorts Items reverse Magnitude
             Collections.sort(listItems , Collections.reverseOrder());
             items = listItems;
-            if(savedInstanceState == null)
-            {
+            //If first load, display list
+            //needs to be in observe because otherwise null object reference :(
+            //only on first because otherwise items are in savedInstanceState
+            if(savedInstanceState == null) {
                 displayItems();
             }
         });
-        if(savedInstanceState != null)
-        {
+        //If not first load set saved items and display list.
+        if(savedInstanceState != null) {
             items = savedInstanceState.getParcelableArrayList("items");
             displayItems();
         }
     }
 
-
-
-    //Move Bottom Nav to correct position if not explciitly clcik on
-    //Bottom Nav - i.e when pressing back
+    //Move Bottom Nav to correct position if not explicitly click on Bottom Nav
+    //i.e when pressing back
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -97,15 +88,21 @@ public class HomeFragment extends Fragment{
         }
     }
 
+    //Save items on orientation change
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("items" , items);
     }
 
+    //Take items and display list
+    // 1x QuakeButton if vertical
+    // 2x QuakeButtons if horizontal
     private void displayItems() {
+        //Ensures fresh list
         liner.removeAllViews();
         LinearLayout linearLayout = null;
+        //Different layout params for vertical and horizontal
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         boolean orientaion = false;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -117,11 +114,16 @@ public class HomeFragment extends Fragment{
             param.setMargins(8, 0, 8, 0);
         }
 
+
         for (int i = 0; i < items.size(); i++) {
             Item selectedItem = items.get(i);
             QuakeButton btn = new QuakeButton(getContext(), selectedItem, param);
 
+            //If vertical just add QuakeButton to liner
+            //Else add to horizontal linearLayout
             if (orientaion == true) {
+                //If list is odd and current item last
+                //1 button takes up 2x slot
                 if (i % 2 == 0 && i == items.size() - 1) {
                     linearLayout = new LinearLayout(getContext());
 
@@ -141,5 +143,20 @@ public class HomeFragment extends Fragment{
                 liner.addView(btn);
             }
         }
+    }
+
+    //Redraws list
+    //Don't actually refresh cause observer is always watching - not scary sounding  ◥(ºwº)◤
+    @Override
+    public void onRefresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Cancel the Visual indication of a refresh
+                swipeRefresh.setRefreshing(false);
+                //Get new items and display
+                displayItems();
+            }
+        }, 1500);
     }
 }

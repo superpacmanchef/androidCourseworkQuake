@@ -29,13 +29,14 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
     private  MapView mapView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quake_more);
         getSupportActionBar().setTitle("Quake Info");
 
+        //TODO: show error message if aint nothing there.
         selectedItem = (Item)getIntent().getExtras().getSerializable("Item") ;
+
         locationText = (TextView)findViewById(R.id.locationText);
         locationText.setText(selectedItem.getLocation());
         dateText = (TextView)findViewById(R.id.dateText);
@@ -57,7 +58,7 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
     }
-
+    //Draws map
     @Override
     public void onMapReady(GoogleMap googleMap){
         LatLng latLng = new LatLng(Float.parseFloat(selectedItem.getGeoLat()) , Float.parseFloat(selectedItem.getGeoLong()));
@@ -65,7 +66,9 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
         googleMap.getUiSettings().setAllGesturesEnabled(false);
         addMarker(selectedItem , googleMap);
     }
-
+    //Adds marker to map
+    //Cause this is reused function wanted to break out into own thing
+    //But didn't know how to effectively
     private void addMarker(Item item , GoogleMap googleMap) {
         if (Float.parseFloat(item.getMagnitude()) < 1) {
             googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(item.getGeoLat()) , Double.parseDouble(item.getGeoLong()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(item.getLocation()));
@@ -113,6 +116,7 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
         mapView.onDestroy();
     }
 
+    //Save map state on reorientated
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

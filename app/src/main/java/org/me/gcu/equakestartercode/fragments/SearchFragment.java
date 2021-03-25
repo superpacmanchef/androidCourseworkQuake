@@ -60,16 +60,24 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
     private IBottomNavMove bottomNavMove;
     private ItemViewModel itemViewModel;
     private ArrayList<Item> searchItems = new ArrayList<>();
+    private TextView noQuakes;
+    //Westsest
     private Item leftist = null;
+    //Eastest
     private Item rightist = null;
+    //Northest
     private Item upist = null;
+    //Southest
     private Item downist = null;
+    //Biggest Magnitude
     private Item biggest = null;
+    //Deepest in km
     private Item deepest = null;
+    //Deepest in km
     private Item shallowist = null;
+    //Has user searched
     private boolean hasPressed = false;
 
-    //TODO: REJIG LANDSCAPE VIEW
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -84,8 +92,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-            //Get View Model Data Shares instance with Activity (Main Activity)
+            //View Model Data Shares instance with Activity (Main Activity)
             itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+            //Observes updates items global variables whenever itemviewmodel updates
             itemViewModel.getItems().observe(this, listItems -> {
                 items = listItems;
             });
@@ -97,6 +106,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
             deepFrame = (FrameLayout) view.findViewById(R.id.deepFrame);
             shallowFrame = (FrameLayout) view.findViewById(R.id.shallowFrame);
             sc = (ScrollView) getView().findViewById(R.id.scrollView3);
+            noQuakes = (TextView) getView().findViewById(R.id.noQuakes);
 
             //Sets EditTexts startDate and endDate to uneditable and on press show DatePickerDialog.
             startDate = (EditText) view.findViewById(R.id.startDate);
@@ -141,20 +151,22 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
             endDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 
             search = (Button) view.findViewById(R.id.search);
-            search.setOnClickListener(this::onClick);
+            search.setOnClickListener(this);
             bottomNavMove = (IBottomNavMove) getActivity();
 
         //On orientation change set hasPressed to previous saved value.
         if(savedInstanceState != null) {
             searchItems = savedInstanceState.getParcelableArrayList("searchItems");
             hasPressed = savedInstanceState.getBoolean("hasPressed");
+            //only re-search for data if search has already occurred
             if(hasPressed == true) {
-                getExtremes();
+                getExtremes(searchItems);
+                displayItems();
             }
         }
     }
 
-    //On orientation change save hasPressed value
+    //On orientation change save hasPressed value and current list of items
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -172,17 +184,18 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
         }
     }
 
-    //Run searchDate().
+    //On click of search button run searchDate(), the getExtremes() then displayItems()
     @Override
     public void onClick(View v) {
         if (v == search) {
             hasPressed = true;
             searchDate(startDate.getText().toString(), endDate.getText().toString());
+            getExtremes(searchItems);
+            displayItems();
         }
     }
 
-    //Takes startDate and endDate and sets leftist , rightest ... ect Items
-    //Then runs displayItems
+    //Takes startDate and endDate and sets all items with those dates to searchItems
     private void searchDate(String startDate, String endDate) {
         Date startDateDate = parseEnterDate(startDate);
         Date endDateDate = parseEnterDate(endDate);
@@ -194,11 +207,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
                 searchItems.add(items.get(i));
             }
         }
-        getExtremes();
     }
 
-    //Returns the leftist , rightist etc... from the list of Items.
-    private void getExtremes() {
+    //Using searchItems calculates and sets the leftist , rightist etc...
+    private void getExtremes(ArrayList<Item> searchItems) {
         for (int j = 0; j < searchItems.size(); j++) {
             Item currentItem = searchItems.get(j);
             if (j == 0) {
@@ -228,7 +240,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
                 if (Float.parseFloat(biggest.getMagnitude()) < Float.parseFloat(currentItem.getMagnitude())) {
                     biggest = currentItem;
                 }
-
+                //".getDepth().substring(0, 2)" -> removes last 2 characters from depth which is "km"
                 if (Float.parseFloat(deepest.getDepth().substring(0, 2)) < Float.parseFloat(currentItem.getDepth().substring(0, 2))) {
                     deepest = currentItem;
                 }
@@ -238,15 +250,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
                 }
             }
         }
-
-        displayItems();
     }
 
     //Removes views from each Frame
     //Displays each corresponding Item as a QuakeButton
     private void displayItems() {
+            sc.setVisibility(View.INVISIBLE);
+            noQuakes.setVisibility(View.INVISIBLE);
             //Sets text of each of the specific Items.
-            sc.setVisibility(View.VISIBLE);
             eastFrame.removeAllViews();
             northFrame.removeAllViews();
             westFrame.removeAllViews();
@@ -255,6 +266,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
             deepFrame.removeAllViews();
             shallowFrame.removeAllViews();
             if (searchItems.size() > 0) {
+                sc.setVisibility(View.VISIBLE);
                 eastFrame.addView(new QuakeButton(getContext(), rightist));
                 westFrame.addView(new QuakeButton(getContext(), leftist));
                 northFrame.addView(new QuakeButton(getContext(), upist));
@@ -263,14 +275,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
                 deepFrame.addView(new QuakeButton(getContext(), deepest));
                 shallowFrame.addView(new QuakeButton(getContext(), shallowist));
             } else {
-                String nope = "No Earthquakes recorded during that time period";
-                TextView t = new TextView(requireContext());
-                t.setText(nope);
-                eastFrame.addView(t);
+                noQuakes.setVisibility(View.VISIBLE);
             }
     }
     
-    //Parses Date enter with calender
+    //Parses Date entered with DatePickerDialog
     private Date parseEnterDate(String date) {
         SimpleDateFormat dateFormatOut = new SimpleDateFormat("dd-MM-yyyy");
         Date outDate = null;
@@ -282,7 +291,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
         return outDate;
     }
 
-    //Parses Date from the xml
+    //Parses Date from Items (XML)
     private Date parseDataDate(String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
         Date outDate = null;

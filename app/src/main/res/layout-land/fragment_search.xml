@@ -77,11 +77,14 @@
                 android:id="@+id/scrollView3"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:foregroundGravity="center"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/linearLayout6"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0">
 
                 <LinearLayout
                     android:id="@+id/linearLayout2"
@@ -94,7 +97,7 @@
                         android:id="@+id/eastLinear"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center_horizontal"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -102,7 +105,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Most Easterly" />
+                            android:text="Most Easterly"
+                            android:textSize="18sp" />
 
                         <FrameLayout
                             android:id="@+id/eastFrame"
@@ -118,6 +122,7 @@
                         android:id="@+id/westLinear"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -125,7 +130,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Most Westerly" />
+                            android:text="Most Westerly"
+                            android:textSize="18sp" />
 
                         <FrameLayout
                             android:id="@+id/westFrame"
@@ -139,6 +145,7 @@
                         android:id="@+id/northLinear"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -146,7 +153,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Most Northern" />
+                            android:text="Most Northern"
+                            android:textSize="18sp" />
 
                         <FrameLayout
                             android:id="@+id/northFrame"
@@ -168,7 +176,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Most Southern" />
+                            android:text="Most Southern"
+                            android:textSize="18sp" />
 
                         <FrameLayout
                             android:id="@+id/southFrame"
@@ -182,6 +191,7 @@
                         android:id="@+id/biggestLinear"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -189,7 +199,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Biggest Magnitude" />
+                            android:text="Biggest Magnitude"
+                            android:textSize="18sp" />
 
                         <FrameLayout
                             android:id="@+id/bigFrame"
@@ -203,6 +214,7 @@
                         android:id="@+id/deepestLinear"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -210,7 +222,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Deepest Quake" />
+                            android:text="Deepest Quake"
+                            android:textSize="18sp" />
 
                         <FrameLayout
                             android:id="@+id/deepFrame"
@@ -224,6 +237,7 @@
                         android:id="@+id/shallowestLinear"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -231,7 +245,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Shallowest Quake" />
+                            android:text="Shallowest Quake"
+                            android:textSize="18sp" />
 
                         <FrameLayout
                             android:id="@+id/shallowFrame"
@@ -242,6 +257,19 @@
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>
+
+            <TextView
+                android:id="@+id/noQuakes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="No earthquakes found during that timeframe."
+                android:textSize="24sp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/scrollView3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout6"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

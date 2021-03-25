@@ -5,7 +5,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.Serializable;
-
+//Implements parcelable to be allowed to save in InstanceState
 public class Item implements Serializable, Comparable , Parcelable {
 
     private String title;
@@ -106,10 +106,16 @@ public class Item implements Serializable, Comparable , Parcelable {
 
     public void setDescription(String description) {
         this.description = description;
+        //Splits description into Array of strings
+        //";" to split all values from each other
+        //":" to split value tag from value itself
+        //For example - "Location : JERSY"
+        // ["Location" , "JERSY"] <- [1] the bit you want.
         String[] tokens = description.split(";|: ");
-
-        for(int i = 0 ; i < tokens.length ; i++)
-        {
+        //Takes unique items in description and sets to corresponding variables
+        //Have to do loop for some reason
+        // 3  = Location information , 7 = Depth inforamtion and 9 Magnitude information
+        for(int i = 0 ; i < tokens.length ; i++) {
            if (i == 3)
            {
                this.setLocation(tokens[i].trim());
@@ -176,6 +182,8 @@ public class Item implements Serializable, Comparable , Parcelable {
         dest.writeString(magnitude);
     }
 
+    //This will fail if not comparing item
+    //Input has to be Object because parcelable says so.
     @Override
     public int compareTo(Object o) {
         Item i = (Item) o;

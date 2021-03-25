@@ -35,11 +35,11 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback , Compo
     private IBottomNavMove bottomNavMove;
     private ItemViewModel itemViewModel ;
     private SupportMapFragment mapFragment;
-    private Button refresh;
     private CheckBox low;
     private CheckBox medium;
     private CheckBox high;
     private GoogleMap googleMap;
+    //Aprox UK position
     private float zoom  = 5;
     private double latitude = 54.576519;
     private double longitude = -2.77954;
@@ -58,8 +58,14 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback , Compo
         medium = (CheckBox) view.findViewById(R.id.medium);
         high = (CheckBox) view.findViewById(R.id.high);
 
-
-        if(savedInstanceState != null) {
+        //If first load set all checkboxes to true
+        //Else set savedInstanceState to global variables
+        if(savedInstanceState == null) {
+            low.setChecked(true);
+            medium.setChecked(true);
+            high.setChecked(true);
+        }
+        else{
             zoom = savedInstanceState.getFloat("zoom");
             latitude = savedInstanceState.getDouble("lat");
             longitude = savedInstanceState.getDouble("long");
@@ -67,14 +73,12 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback , Compo
             medium.setChecked(savedInstanceState.getBoolean(",medium"));
             high.setChecked(savedInstanceState.getBoolean("high"));
         }
-        else{
-            low.setChecked(true);
-            medium.setChecked(true);
-            high.setChecked(true);
-        }
 
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
+        //View Model Data Shares instance with Activity (Main Activity)
         itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+        //Observes updates items global variables whenever itemviewmodel updates
         itemViewModel.getItems().observe(this  , listItems -> {
             items = listItems;
             getMap();
@@ -86,8 +90,12 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback , Compo
         high.setOnCheckedChangeListener(this);
     }
 
+    //If map exists save map position and draw map
     private void getMap() {
+        //If map already loaded save current camera position
+        //I.E checkbox changed
         if(googleMap != null) {
+            //saved to ensure continuous map position
             zoom = googleMap.getCameraPosition().zoom;
             LatLng latLng = googleMap.getCameraPosition().target;
             latitude = latLng.latitude;
@@ -96,7 +104,7 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback , Compo
         mapFragment.getMapAsync(this);
     }
 
-    //Move Bottom Nav to correct position if not explicitly click on
+    //Move Bottom Nav to correct position(lat,long,zoom) if not explicitly click on
     //Bottom Nav - i.e when pressing back
     @Override
     public void onHiddenChanged(boolean hidden) {
@@ -106,6 +114,7 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback , Compo
         }
     }
 
+    //Saves camera position(lat,long,zoom) and True/False state of checkboxes
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -120,6 +129,7 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback , Compo
         }
     }
 
+    //Adds marker to map
     private void addMarker(Item item , GoogleMap googleMap) {
         if (Float.parseFloat(item.getMagnitude()) < 1) {
             googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(item.getGeoLat()) , Double.parseDouble(item.getGeoLong()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(item.getLocation()));
@@ -130,19 +140,25 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback , Compo
         }
     }
 
+    //Draws Map
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        //Clears map of markers
         googleMap.clear();
+
         for (int i = 0; i < items.size(); i++) {
             if(isCheckedItem(items.get(i))) {
                 addMarker(items.get(i), googleMap);
             }
         }
             this.googleMap = googleMap;
+            //Uses saved lat,long and zoom
+            //ensure continuous map position if check changed
             LatLng latLng = new LatLng(latitude, longitude);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
+    //Takes in Item and return T/F if Item marker should be added
     private boolean isCheckedItem(Item item) {
         float magnitude = Float.parseFloat(item.getMagnitude());
         if(low.isChecked() && magnitude < 1) {
@@ -162,6 +178,7 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback , Compo
 
     }
 
+    //If checkboxes changed redraw map.
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             getMap();

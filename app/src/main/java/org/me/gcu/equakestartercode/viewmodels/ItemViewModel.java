@@ -2,13 +2,12 @@ package org.me.gcu.equakestartercode.viewmodels;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import org.jetbrains.annotations.NotNull;
 import org.me.gcu.equakestartercode.utility.GetXMLString;
-import org.me.gcu.equakestartercode.interfaces.IAsyncResponse;
+import org.me.gcu.equakestartercode.interfaces.IGetXMLResponse;
 import org.me.gcu.equakestartercode.models.Item;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -17,12 +16,14 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.List;
 
-public class ItemViewModel extends ViewModel implements IAsyncResponse {
+public class ItemViewModel extends ViewModel implements IGetXMLResponse {
+    //Mutable live data updates observers
     private MutableLiveData<ArrayList<Item>> items;
     private static String urlSource = "http://quakes.bgs.ac.uk/feeds/MhSeismology.xml";
 
+    //If items == null, load data set items and return
+    //Else return items
     public MutableLiveData<ArrayList<Item>> getItems() {
         if(items == null)
         {
@@ -32,10 +33,10 @@ public class ItemViewModel extends ViewModel implements IAsyncResponse {
         return items;
     }
 
-    public MutableLiveData<ArrayList<Item>> loadNewItems() {
+    //Load new data and set items and therefore update observers
+    public void loadNewItems() {
             items = new MutableLiveData<ArrayList<Item>>();
             loadItems();
-            return items;
     }
 
     private void loadItems() {
@@ -43,12 +44,14 @@ public class ItemViewModel extends ViewModel implements IAsyncResponse {
         getQuakeData.execute(urlSource);
     }
 
+    //get big xml string parse it into Arraylist and set it to items
     @Override
-    public void returnXML(String xml)
-    {
+    public void returnXML(String xml) {
+        //setValue cause main thread
         items.setValue(parseXML(xml));
     }
 
+    //Converts big xml string into Arraylist of Items adn returns
     private ArrayList<Item> parseXML(@NotNull String XML) {
         Item item = new Item();
         ArrayList<Item> list = new ArrayList<Item>();
