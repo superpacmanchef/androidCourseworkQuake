@@ -1,3 +1,5 @@
+//s1703629
+
 package org.me.gcu.equakestartercode.models;
 
 import android.os.Parcel;

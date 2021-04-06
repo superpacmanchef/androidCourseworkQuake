@@ -1,4 +1,4 @@
-
+//s1703629
 package org.me.gcu.equakestartercode.fragments;
 
 import android.app.DatePickerDialog;
@@ -152,7 +152,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener  {
             };
 
             //Sets default text for startDate and endDate to current Date.
-
             search = (Button) view.findViewById(R.id.search);
             search.setOnClickListener(this);
             bottomNavMove = (IBottomNavMove) getActivity();

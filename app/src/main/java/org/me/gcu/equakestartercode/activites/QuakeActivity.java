@@ -1,3 +1,5 @@
+//s1703629
+
 package org.me.gcu.equakestartercode.activites;
 
 import android.os.Bundle;
@@ -45,7 +47,6 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
             selectedItem = null;
         }
 
-
         locationText = (TextView)findViewById(R.id.locationText);
         dateText = (TextView)findViewById(R.id.dateText);
         latText = (TextView)findViewById(R.id.latText);
@@ -66,20 +67,19 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
             locationText.setText(selectedItem.getLocation());
             latText.setText(selectedItem.getGeoLat());
             dateText.setText(selectedItem.getPubDate());
-        }else
-        {
+        }
+        else {
             infoLinear.setVisibility(View.INVISIBLE);
             mapView.setVisibility(View.INVISIBLE);
             errortext.setVisibility(View.VISIBLE);
             locationText.setText("ERROR");
         }
 
-
-
         mapView = findViewById(R.id.itemLocation);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
     }
+
     //Draws map
     @Override
     public void onMapReady(GoogleMap googleMap){
@@ -88,6 +88,7 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
         googleMap.getUiSettings().setAllGesturesEnabled(false);
         addMarker(selectedItem , googleMap);
     }
+
     //Adds marker to map
     //Cause this is reused function wanted to break out into own thing
     //But didn't know how to effectively

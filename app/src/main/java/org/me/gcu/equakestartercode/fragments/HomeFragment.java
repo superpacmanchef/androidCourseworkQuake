@@ -1,3 +1,5 @@
+//s1703629
+
 package org.me.gcu.equakestartercode.fragments;
 
 import android.content.res.Configuration;
@@ -114,7 +116,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             param.setMargins(8, 0, 8, 0);
         }
 
-
         for (int i = 0; i < items.size(); i++) {
             Item selectedItem = items.get(i);
             QuakeButton btn = new QuakeButton(getContext(), selectedItem, param);
@@ -143,6 +144,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 liner.addView(btn);
             }
         }
+
     }
 
     //Redraws list
