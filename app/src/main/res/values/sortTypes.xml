@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sortTypes">
+        <item name = "maghightolow">Magnitude(High to Low)</item>
+        <item name = "maglowtohigh">Magnitude(Low to High)</item>
+        <item name = "latNorthToSouth">Latitude(North to South)</item>
+        <item name = "latASouthToNorth"> Latitude(South to North)</item>
+        <item name = "longWestToEast">Longitude(West to East)</item>
+        <item name = "longEastToWest">Longitude(East to West)</item>
+    </string-array>
+</resources>

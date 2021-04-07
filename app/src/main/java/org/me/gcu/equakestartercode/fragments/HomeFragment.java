@@ -3,10 +3,12 @@
 package org.me.gcu.equakestartercode.fragments;
 
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -16,14 +18,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 
 
 import org.jetbrains.annotations.NotNull;
+import org.me.gcu.equakestartercode.ItemComparators.ItemLatComparator;
+import org.me.gcu.equakestartercode.ItemComparators.ItemLongComparator;
 import org.me.gcu.equakestartercode.UIComponents.QuakeButton;
 import org.me.gcu.equakestartercode.interfaces.IBottomNavMove;
 import org.me.gcu.equakestartercode.models.Item;
@@ -41,6 +47,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private ArrayList<Item> items ;
     private ItemViewModel itemViewModel;
     private SwipeRefreshLayout swipeRefresh;
+    private Spinner sortSpinner;
+    private String sortMethod;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -51,13 +59,29 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         liner = (LinearLayout) view.findViewById(R.id.liner);
         itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
         swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
+        sortSpinner = (Spinner)view.findViewById(R.id.sortSpinner);
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedSort = sortSpinner.getItemAtPosition(position).toString();
+                sortMethod = selectedSort;
+                sortItems();
+                displayItems();
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         //refresh list on pull up on scrollview
         swipeRefresh.setOnRefreshListener(this);
         bottomNavMove = (IBottomNavMove) requireActivity();
@@ -76,6 +100,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         //If not first load set saved items and display list.
         if(savedInstanceState != null) {
             items = savedInstanceState.getParcelableArrayList("items");
+            sortItems();
             displayItems();
         }
     }
@@ -160,5 +185,33 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 displayItems();
             }
         }, 1500);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void sortItems() {
+        if(sortMethod.equals("Magnitude(High to Low)"))
+        {
+            Collections.sort(items , Collections.reverseOrder());
+        }
+        else if (sortMethod.equals("Magnitude(Low to High)"))
+        {
+            Collections.sort(items);
+        }
+        else if (sortMethod.equals("Latitude(North to South)"))
+        {
+            Collections.sort(items , new ItemLatComparator());
+        }
+        else if (sortMethod.equals("Latitude(South to North)"))
+        {
+            Collections.sort(items , new ItemLatComparator().reversed() );
+        }
+        else if (sortMethod.equals("Longitude(West to East)"))
+        {
+            Collections.sort(items , new ItemLongComparator());
+        }
+        else if(sortMethod.equals("Longitude(East to West)"))
+        {
+            Collections.sort(items , new ItemLongComparator().reversed());
+        }
     }
 }
