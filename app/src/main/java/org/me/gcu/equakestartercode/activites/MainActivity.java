@@ -1,4 +1,5 @@
 //s1703629
+//Jay Malley
 
 package org.me.gcu.equakestartercode.activites;
 
@@ -24,7 +25,6 @@ import org.me.gcu.equakestartercode.interfaces.IBottomNavMove;
 import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 public class MainActivity extends AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener , IBottomNavMove , Serializable {
     private BottomNavigationView bottomNavigationView;

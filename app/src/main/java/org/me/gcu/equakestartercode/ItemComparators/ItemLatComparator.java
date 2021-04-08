@@ -1,4 +1,6 @@
 package org.me.gcu.equakestartercode.ItemComparators;
+//Jay Malley
+//s1703629
 
 import org.me.gcu.equakestartercode.models.Item;
 

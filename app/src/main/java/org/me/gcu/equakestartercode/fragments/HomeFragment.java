@@ -1,4 +1,5 @@
 //s1703629
+//Jay Malley
 
 package org.me.gcu.equakestartercode.fragments;
 
@@ -67,8 +68,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
         swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         sortSpinner = (Spinner)view.findViewById(R.id.sortSpinner);
-        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedSort = sortSpinner.getItemAtPosition(position).toString();
@@ -100,6 +100,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         //If not first load set saved items and display list.
         if(savedInstanceState != null) {
             items = savedInstanceState.getParcelableArrayList("items");
+            sortMethod = savedInstanceState.getString("sortMethod");
             sortItems();
             displayItems();
         }
@@ -120,6 +121,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("items" , items);
+        outState.putString("sortMethod" , sortMethod);
     }
 
     //Take items and display list
@@ -187,6 +189,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }, 1500);
     }
 
+
+    //sorts iterms depeingong on selection
+    //API N + cause of reversed Comparator fucntion
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void sortItems() {
         if(sortMethod.equals("Magnitude(High to Low)"))

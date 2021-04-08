@@ -1,4 +1,5 @@
 //s1703629
+//Jay Malley
 
 package org.me.gcu.equakestartercode.activites;
 
@@ -38,7 +39,7 @@ public class QuakeActivity extends AppCompatActivity implements OnMapReadyCallba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quake_more);
-        getSupportActionBar().setTitle("Quake Info");
+        getSupportActionBar().setTitle("Quake Info - S1703629");
 
         try {
             selectedItem = (Item)getIntent().getExtras().getSerializable("Item") ;

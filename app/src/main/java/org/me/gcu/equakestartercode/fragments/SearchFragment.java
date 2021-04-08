@@ -1,4 +1,6 @@
 //s1703629
+//Jay Malley
+
 package org.me.gcu.equakestartercode.fragments;
 
 import android.app.DatePickerDialog;

@@ -1,4 +1,5 @@
 //s1703629
+//Jay Malley
 
 package org.me.gcu.equakestartercode.UIComponents;
 
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.button.MaterialButton;
 
+import org.me.gcu.equakestartercode.R;
 import org.me.gcu.equakestartercode.activites.QuakeActivity;
 import org.me.gcu.equakestartercode.models.Item;
 
@@ -27,7 +29,7 @@ public class QuakeButton extends MaterialButton implements View.OnClickListener 
         this.setTextColor(Color.BLACK);
         this.setOnClickListener(this::onClick);
         this.setLayoutParams(params);
-
+        //Sets Button color
         if (Float.parseFloat(item.getMagnitude()) < 1) {
             this.setBackgroundColor(Color.GREEN);
         } else if (Float.parseFloat(item.getMagnitude()) >= 1 && Float.parseFloat(item.getMagnitude()) < 3) {

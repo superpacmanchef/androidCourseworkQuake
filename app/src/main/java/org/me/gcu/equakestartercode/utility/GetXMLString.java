@@ -1,4 +1,5 @@
 //s1703629
+//Jay Malley
 
 package org.me.gcu.equakestartercode.utility;
 
@@ -22,7 +23,7 @@ public class GetXMLString extends AsyncTask<String , Void , String >
         this.listener = listener;
     }
 
-    //Turns given url into bug string
+    //Turns given url into xml string
     @Override
     protected String doInBackground(String... strings) {
         String result = "";
@@ -48,7 +49,7 @@ public class GetXMLString extends AsyncTask<String , Void , String >
         return null;
     }
 
-    //Once completed runs returnXML
+    //Once completed runs lisener.returnXML
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
