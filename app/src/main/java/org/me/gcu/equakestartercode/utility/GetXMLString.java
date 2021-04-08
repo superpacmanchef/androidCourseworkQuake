@@ -44,7 +44,6 @@ public class GetXMLString extends AsyncTask<String , Void , String >
             return result;
 
         } catch (IOException ae) {
-            Log.e("MyTag", "ioexception in run");
         }
         return null;
     }

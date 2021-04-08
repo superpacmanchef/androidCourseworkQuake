@@ -77,7 +77,6 @@ public class ItemViewModel extends ViewModel implements IGetXMLResponse {
                         // Now just get the associated text
                         String temp = xpp.nextText();
                         // Do something with text
-                        Log.e("MyTag", "Title " + temp);
                         item.setTitle(temp);
                     } else
                         // Check which Tag we have
@@ -85,7 +84,6 @@ public class ItemViewModel extends ViewModel implements IGetXMLResponse {
                             // Now just get the associated text
                             String temp = xpp.nextText();
                             // Do something with text
-                            Log.e("MyTag", "Nut is desc " + temp);
                             item.setDescription(temp);
                         } else
                             // Check which Tag we have
@@ -93,7 +91,6 @@ public class ItemViewModel extends ViewModel implements IGetXMLResponse {
                                 // Now just get the associated text
                                 String temp = xpp.nextText();
                                 // Do something with text
-                                Log.e("MyTag", "Washer is link" + temp);
                                 item.setLink(temp);
                             } else
                                 // Check which Tag we have
@@ -101,7 +98,6 @@ public class ItemViewModel extends ViewModel implements IGetXMLResponse {
                                     // Now just get the associated text
                                     String temp = xpp.nextText();
                                     // Do something with text
-                                    Log.e("MyTag", "Washer is pub " + temp);
                                     item.setPubDate(temp);
                                 } else
                                     // Check which Tag we have
@@ -109,7 +105,6 @@ public class ItemViewModel extends ViewModel implements IGetXMLResponse {
                                         // Now just get the associated text
                                         String temp = xpp.nextText();
                                         // Do something with text
-                                        Log.e("MyTag", "Washer is  cat" + temp);
                                         item.setCategory(temp);
                                     } else
                                         // Check which Tag we have
@@ -117,7 +112,6 @@ public class ItemViewModel extends ViewModel implements IGetXMLResponse {
                                             // Now just get the associated text
                                             String temp = xpp.nextText();
                                             // Do something with text
-                                            Log.e("MyTag", "Washer is lat " + temp);
                                             item.setGeoLat(temp);
                                         } else
                                             // Check which Tag we have
@@ -125,7 +119,6 @@ public class ItemViewModel extends ViewModel implements IGetXMLResponse {
                                                 // Now just get the associated text
                                                 String temp = xpp.nextText();
                                                 // Do something with text
-                                                Log.e("MyTag", "Washer is " + temp);
                                                 item.setGeoLong(temp);
                                             }
                 } else if (eventType == XmlPullParser.END_TAG) {

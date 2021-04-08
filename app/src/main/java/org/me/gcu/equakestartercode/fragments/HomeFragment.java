@@ -73,7 +73,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedSort = sortSpinner.getItemAtPosition(position).toString();
                 sortMethod = selectedSort;
-                sortItems();
+                if(items != null) {
+                    sortItems();
+                }
                 displayItems();
             }
 
@@ -94,6 +96,13 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             //needs to be in observe because otherwise null object reference :(
             //only on first because otherwise items are in savedInstanceState
             if(savedInstanceState == null) {
+                while(true)
+                {
+                    if(items != null)
+                    {
+                        break;
+                    }
+                }
                 displayItems();
             }
         });
